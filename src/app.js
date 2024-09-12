@@ -22,11 +22,21 @@ app.use(cookieParser())
 
 import userRouter from './routes/user.routes.js'
 import projectRouter from './routes/projects.routes.js'
+import aboutRouter from './routes/about.routes.js'
+import contactRouter from './routes/contact.routes.js'
+import galleryRouter from './routes/gallery.routes.js'
+import reviewRouter from './routes/review.routes.js'
+
 
 
 // //routes declaration
 app.use("/api/v1/user", userRouter)
 app.use("/api/v1/projects", projectRouter)
+app.use("/api/v1/about", aboutRouter)
+app.use("/api/v1/contact", contactRouter)
+app.use("/api/v1/gallery", galleryRouter)
+app.use("/api/v1/review", reviewRouter)
+
 
 
 // Error handling middleware

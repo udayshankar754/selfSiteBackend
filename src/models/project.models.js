@@ -46,6 +46,50 @@ const projectSchema = new Schema(
         },
         githubLink : {
             type : String,
+        },
+        technologyUsed : {
+            type : [String],
+        },
+        problemStatement : {
+            type : String,
+        },
+        solution : {
+            type : String,
+        },
+        clientName : {
+            type : String,
+        },
+        clientDescription : {
+            type : String,
+        },
+        clientImage : {
+            type : String,
+        },
+        clientContactNumber : {
+            type : String,
+        },
+        clientEmail : {
+            type : String,
+        },
+        clientSocialConnect : [
+            {
+                name : {
+                    type : String,
+                },
+                url : {
+                    type : String,
+                },
+            }
+        ],
+        projectStatus : {
+            type : String,
+        },
+        projectType : {
+            type : String,
+        },
+        review : {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Review",
         }
         
     },
