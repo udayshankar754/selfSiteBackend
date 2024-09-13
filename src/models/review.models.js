@@ -22,6 +22,10 @@ const reviewSchema = new Schema(
     },
     mobileNumber : {
       type: String,
+    },
+    projectId : {
+      type: Schema.Types.ObjectId,
+      ref: "Project",
     }
   },
   {

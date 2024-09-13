@@ -14,22 +14,20 @@ cloudinary.config({
 
 
 
-const uploadOnCloudinary = async (localFilePath , resourceType) => {
+const uploadOnCloudinary = async (localFilePath , resourceType , folderType = '') => {
     try {
         if(! localFilePath && ! resourceType)  return  null;
-
-        console.log(process.env.CLOUDINARY_API_KEY);
 
         let response;
         if(resourceType == 'video') {
             response = await cloudinary.uploader.upload(localFilePath , {
                 resource_type : resourceType,
-                folder: 'selfSite/Videos',
+                folder: folderType != '' ? `selfSite/Videos/${folderType}/` :'selfSite/Videos',
             })
         } else if (resourceType == 'image') {
             response = await cloudinary.uploader.upload(localFilePath , {
                 resource_type : resourceType,
-                folder: 'selfSite/Images',
+                folder: folderType != '' ? `selfSite/Images/${folderType}/` :'selfSite/Images',
             })
         } else {
             console.error(`Invalid resource type: ${resourceType}`);

@@ -44,8 +44,6 @@ const registerUser = asyncHandler( async (req ,res) => {
    if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0 && req.files.coverImage[0]?.path) {
        coverImageLocalPath = req.files.coverImage[0].path;
    }
-
-   console.log(avatarLocalPath, coverImageLocalPath);
       
    const avatar = avatarLocalPath ? await uploadOnCloudinary(avatarLocalPath, "image") : "";
    const coverImage = coverImageLocalPath ? await uploadOnCloudinary(coverImageLocalPath, "image") : "";
@@ -138,7 +136,6 @@ const logoutUser = asyncHandler( async (req ,res) => {
     }
 
     res.user = null;
-    console.log(res.user);
 
     return res
    .status(200)
@@ -165,8 +162,6 @@ const refreshAccessToken = asyncHandler(async(req, res) => {
         if(!user) {
             throw new ApiError(401, "Invalid Refresh Token")
         }
-
-        console.log(user);
     
         if(incomingRefreshToken != user?.refreshToken) {
             throw new ApiError(401, "Refresh Token is Expired or used") 
@@ -221,7 +216,6 @@ const getCurrentUser = asyncHandler(async(req ,res) => {
         new ApiResponse(200 , req.user , "User Fetched Successfully")
     )
 })
-
 
 const updateAccountDetails = asyncHandler(async(req ,res) => {
     const { email ,fullName } = req.body
@@ -346,9 +340,6 @@ const forgotPassword = asyncHandler( async (req , res) => {
     )
 })
 
-const mailSender = async (resetToken, email) => {
-    const resetUrl = ``
-}
 
 
 export { 
