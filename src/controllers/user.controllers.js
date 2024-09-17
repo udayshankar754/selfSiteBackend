@@ -21,7 +21,9 @@ const generateAccessAndRefreshToken = async(userId) => {
 
 const registerUser = asyncHandler( async (req ,res) => {
     
-   const { fullName , role, tags , mobNo , email , password } = req.body;
+   const { fullName , role , tags , mobNo , email , password } = req.body;
+
+   console.log(req.body);
 
    if(
     [ fullName , email , password].some((fields) => fields?.trim() === "")
@@ -55,6 +57,8 @@ const registerUser = asyncHandler( async (req ,res) => {
     if(coverImageLocalPath && !coverImage ) {
         throw new ApiError(500, "something went wrong while uploading cover Image file")
     }
+
+    // console.log(fullName , avatar, coverImage , role , tags , mobNo , email , avatar , coverImage , password);
    
 
    const user =await User.create({
@@ -62,10 +66,10 @@ const registerUser = asyncHandler( async (req ,res) => {
     role,
     tags,
     mobNo,
-    email,    
-    avatar : avatar !== '' ? avatar?.url  : avatar,
+    email,
+    avatar : avatar!== '' ? avatar?.url  : avatar,
     coverImage : coverImage !== '' ? coverImage?.url  : coverImage,
-    password,
+    password,  
    })
 
    const createdUser = await User.findById(user._id).select('-password -refreshToken')
@@ -218,17 +222,20 @@ const getCurrentUser = asyncHandler(async(req ,res) => {
 })
 
 const updateAccountDetails = asyncHandler(async(req ,res) => {
-    const { email ,fullName } = req.body
-    if(!(email || fullName)) {
-        throw new ApiError(400, "Please fill all the fields")
+    const { mobNo ,fullName , role , tags} = req.body
+    
+    if(!(mobNo || fullName || role || tags)) {
+        throw new ApiError(400, "Please fill the fields you want to update")
     }
 
     const user = await User.findByIdAndUpdate(
         req.user._id,
        {
             $set : {
-                email,
                 fullName,
+                role,
+                tags,
+                mobNo,
             }
        },
         {
@@ -312,33 +319,7 @@ const updateUserCoverImage = asyncHandler(async(req ,res) => {
     )
 })
 
-const forgotPassword = asyncHandler( async (req , res) => {
-    const { email } = req.body;
-    
-    if(!email) {
-        throw new ApiError(400, "Please enter your email")
-    }
 
-    const user = await User.findOne({ email })
-    
-    if(!user) {
-        throw new ApiError(404, "Please Enter a Valid Mail Address")
-    }
-
-    const resetToken = await user.generateResetToken();
-
-    if(resetToken) {
-        throw new ApiError(402 , "Invalid Reset Token")
-    }
-
-    const sendMsg = await mailSender(resetToken , email)
-
-    return res
-   .status(200)
-   .json(
-        new ApiResponse(200 , resetToken  , "reser Token sended successfully")
-    )
-})
 
 
 
@@ -352,5 +333,4 @@ export {
     updateAccountDetails,
     updateUserAvatar,
     updateUserCoverImage,
-    forgotPassword
 }

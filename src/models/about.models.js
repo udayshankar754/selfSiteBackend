@@ -1,4 +1,6 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
+
+
 
 const aboutSchema = new Schema(
   {
@@ -6,17 +8,10 @@ const aboutSchema = new Schema(
       type: String,
       required: true,
     },
-    whyUs : [
+    whyUsImagesId : [
       {
-        image : {
-          type: String,
-        },
-        title : {
-          type: String,
-        },
-        description : {
-          type: String,
-        },
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "WhyUs",
       }
     ]
     
@@ -24,6 +19,5 @@ const aboutSchema = new Schema(
   },
   { timestamps: true }
 )
-
 
 export const About = mongoose.model("About", aboutSchema)

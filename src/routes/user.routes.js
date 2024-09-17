@@ -9,7 +9,6 @@ import {
     updateAccountDetails, 
     updateUserAvatar, 
     updateUserCoverImage ,
-    forgotPassword, 
 } from "../controllers/user.controllers.js";
 import { upload } from '../middlewares/multer.middlewares.js';
 import { verifyJWT } from "../middlewares/auth.middlewares.js";
@@ -20,7 +19,8 @@ router.route("/register").post(
         { name : "avatar", maxCount : 1},
         { name : "coverImage", maxCount : 1}
     ]),
- registerUser)
+    registerUser
+)
 router.route("/login").post(loginUser)
 
 //secrured Routes
@@ -32,8 +32,6 @@ router.route("/update-account-details").patch(verifyJWT , updateAccountDetails)
 
 router.route("/avatar").patch(verifyJWT , upload.single("avatar"), updateUserAvatar)
 router.route("/cover-image").patch(verifyJWT , upload.single("coverImage"), updateUserCoverImage)
-
-router.route('/forgot-password').post(forgotPassword)
 
 
 export default router

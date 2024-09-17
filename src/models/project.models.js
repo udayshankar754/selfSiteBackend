@@ -86,12 +86,7 @@ const projectSchema = new Schema(
         },
         projectType : {
             type : String,
-        },
-        review : {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Review",
-        }
-        
+        },        
     },
     {
         timestamps: true,
