@@ -11,34 +11,14 @@ const projectSchema = new Schema(
         },
         images : [
             {
-                url : {
-                    type : String,
-                },
-                alt : {
-                    type : String,
-                },
-                imageInfo : {
-                    type : String,
-                },
-                imageDescription : {
-                    type : String,
-                },
+                type: Schema.Types.ObjectId,
+                ref: "ProjectImage",
             }
         ],
         video : [
             {
-                url : {
-                    type : String,
-                },
-                alt : {
-                    type : String,
-                },
-                videoInfo : {
-                    type : String,
-                },
-                videoDescription : {
-                    type : String,
-                },
+                type: Schema.Types.ObjectId,
+                ref: "ProjectVideo",
             }
         ],
         projectLink : {
