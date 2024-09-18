@@ -16,4 +16,4 @@ const whyUsImageSchema = new Schema(
   { timestamps: true }
 )
 
-export const WhyUs = mongoose.model("WhyUs", aboutSchema)
+export const WhyUs = mongoose.model("WhyUs", whyUsImageSchema)

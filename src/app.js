@@ -26,11 +26,13 @@ import aboutRouter from './routes/about.routes.js'
 import contactRouter from './routes/contact.routes.js'
 import galleryRouter from './routes/gallery.routes.js'
 import reviewRouter from './routes/review.routes.js'
+import whyUsRouter from './routes/whyUs.routes.js'
 
 
 
 // //routes declaration
 app.use("/api/v1/user", userRouter)
+app.use("/api/v1/whyUs", whyUsRouter)
 app.use("/api/v1/projects", projectRouter)
 app.use("/api/v1/about", aboutRouter)
 app.use("/api/v1/contact", contactRouter)
