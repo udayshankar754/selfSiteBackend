@@ -20,7 +20,6 @@ const addProjectVideo = asyncHandler(async (req, res) => {
   if(!projectVideoLink) {
     throw new ApiError(500, "Failed To Upload Video File")
   }
-  console.log(projectVideoLink);
 
   const projectVideo = await ProjectVideo.create({
     url : projectVideoLink?.url ? projectVideoLink?.url : "",

@@ -1,5 +1,16 @@
 import mongoose ,{Schema} from "mongoose";
 
+const clientSocialConnectSchema = new Schema({
+    name: {
+        type: String,
+        required: true, 
+    },
+    url: {
+        type: String,
+        required: true, 
+    },
+});
+
 const projectSchema = new Schema(
     {
         projectName : {
@@ -52,14 +63,7 @@ const projectSchema = new Schema(
             type : String,
         },
         clientSocialConnect : [
-            {
-                name : {
-                    type : String,
-                },
-                url : {
-                    type : String,
-                },
-            }
+            clientSocialConnectSchema
         ],
         projectStatus : {
             type : String,
