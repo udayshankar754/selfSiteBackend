@@ -14,8 +14,6 @@ const aboutSchema = new Schema(
         ref: "WhyUs",
       }
     ]
-    
-   
   },
   { timestamps: true }
 )
