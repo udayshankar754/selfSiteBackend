@@ -34,7 +34,7 @@ router.route("/update-account-details").patch(verifyJWT , updateAccountDetails)
 
 router.route("/avatar").patch(verifyJWT , upload.single("avatar"), updateUserAvatar)
 router.route("/cover-image").patch(verifyJWT , upload.single("coverImage"), updateUserCoverImage)
-router.route("/add-projects").post(verifyJWT ,addProjectIDs)
-router.route("/remove-projects").post(verifyJWT ,removeProjectIDs);
+router.route("/add-projects").patch(verifyJWT ,addProjectIDs)
+router.route("/remove-projects").patch(verifyJWT ,removeProjectIDs);
 
 export default router

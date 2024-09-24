@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { About } from "../models/about.models.js";
 import { WhyUs } from "../models/whyUs.models.js";
 import { ApiError } from "../utils/ApiError.js";
@@ -67,14 +68,94 @@ const deleteAboutUs = asyncHandler(async (req, res) => {
   return res.status(200).json(new ApiResponse(200, null, "About Us deleted successfully"));
 });
 
-const addWhyUsImage = asyncHandler(async (req, res) => {});
+const addWhyUsImage = asyncHandler(async (req, res) => {
+  const { id } = req.params;
 
-const removeWhyUsImage = asyncHandler(async (req, res) => {});
+  const isValidId = await About.findById(id);
 
-const getAboutUs = asyncHandler(async (req, res) => {});
+  if(!isValidId) {
+    throw new ApiError(404, `About Us with id ${id} not found`);
+  }
+
+  const { whyUsId } = req.body;
+
+  if(! whyUsId) {
+    throw new ApiError(400, "Why Us Id is Required")
+  }
+
+  const whyUsIDs = [...new Set(Array.isArray(whyUsId) ? whyUsId : [whyUsId])];
+  const whyUsObjectIdArray = whyUsIDs.map(id => new mongoose.Types.ObjectId(id.trim()));
+  const validWhyUs = await WhyUs.find({ _id: { $in: whyUsObjectIdArray } });
+
+  const invalidWhyUsData = whyUsObjectIdArray.filter(testId =>
+      !validWhyUs.some(item => item._id.equals(testId))
+  );
+
+  if (invalidWhyUsData.length > 0) {
+      throw new ApiError(400, `Invalid Why Us IDs: ${invalidWhyUsData.join(', ')}`);
+  }
+
+  const combinedWhyUsIDs = [
+      ...isValidId?.whyUsImagesId?.map(id => id.toString()), // Convert to string
+      ...validWhyUs.map(vid => vid._id.toString()) // Ensure they are strings too
+  ];
+  const finalWhyUsIDs = [...new Set(combinedWhyUsIDs)];
+
+  const updatedAbout = await About.findByIdAndUpdate(id, {
+    whyUsImagesId: finalWhyUsIDs.map(id => new mongoose.Types.ObjectId(id)), // Convert back to ObjectId if necessary
+  }, { new: true })
+
+
+  return  res.status(200).json(
+    new ApiResponse(200 , updatedAbout , "Project Added successfully")
+  );
+});
+
+const removeWhyUsImage = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  const isValidId = await About.findById(id);
+
+  if(!isValidId) {
+    throw new ApiError(404, `About Us with id ${id} not found`);
+  }
+
+  const { whyUsId } = req.body;
+
+  if(! whyUsId) {
+    throw new ApiError(400, "Why Us is Required")
+  }
+
+  const whyUsIDs = [...new Set(Array.isArray(whyUsId) ? whyUsId : [whyUsId])];
+  const whyUsObjectIdArray = whyUsIDs.map(id => new mongoose.Types.ObjectId(id.trim()));
+
+  const notInWhyUsIds = whyUsObjectIdArray.filter(projectId =>
+      !isValidId?.whyUsImagesId?.some(existingId => existingId.equals(projectId))
+  );
+
+  if(notInWhyUsIds.length > 0) {
+      throw new ApiError(400, `Invalid Why Us IDs: ${notInWhyUsIds.join(', ')}`);
+  }
+
+  const finalIds = isValidId?.whyUsImagesId?.filter(existingId =>
+      !whyUsObjectIdArray.some(reqId => reqId.equals(existingId))
+  );
+
+  const UpdateAbout = await About.findByIdAndUpdate(id , {
+      whyUsImagesId: finalIds.map(id => new mongoose.Types.ObjectId(id)),
+  },
+  { new: true }  
+  );
+
+  return res.status(200).json(
+      new ApiResponse(200 , UpdateAbout, "Why Us Updated successfully")
+  );
+});
 
 export {
   addAboutUs, 
   updateAboutUs,
-  deleteAboutUs
+  deleteAboutUs,
+  addWhyUsImage,
+  removeWhyUsImage,
 }
