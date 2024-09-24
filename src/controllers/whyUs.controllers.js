@@ -8,6 +8,12 @@ const addWhyUs = asyncHandler(async (req, res) => {
 
   const { title , description } = req.body;
 
+  const userId = req.user?._id;
+
+  if(!userId) {
+    throw new ApiError(401, "Unauthorized Access")
+  }
+
   const whyUsImageLocalPath = req.file?.path
 
   if(!whyUsImageLocalPath) {
@@ -23,7 +29,8 @@ const addWhyUs = asyncHandler(async (req, res) => {
   const whyUsImageData = await WhyUs.create({
     title,
     description,
-    image: whyUsImage ? whyUsImage?.url : ""
+    image: whyUsImage ? whyUsImage?.url : "",
+    userId
   })
 
   return res

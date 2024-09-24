@@ -12,6 +12,10 @@ const whyUsImageSchema = new Schema(
     description : {
       type: String,
     },
+    userId : {
+      type: Schema.Types.ObjectId,
+      ref: "User"
+    }
   },
   { timestamps: true }
 )

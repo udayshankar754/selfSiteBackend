@@ -38,7 +38,13 @@ const userSchema = new mongoose.Schema(
         },
         refreshToken : {
             type : String,
-        }
+        },
+        projectId : [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref : 'Project'
+            }
+        ]
     },
     {
         timestamps: true

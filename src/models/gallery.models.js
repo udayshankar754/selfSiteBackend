@@ -12,6 +12,10 @@ const gallerySchema = new Schema(
     },
     description: {
       type: String,
+    },
+    userId : {
+      type: Schema.Types.ObjectId,
+      ref: "User",
     }
   },
   {

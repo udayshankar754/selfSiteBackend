@@ -5,6 +5,8 @@ import { removeFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 import { options } from "../utils/common.js";
+import { Project } from "../models/project.models.js";
+import mongoose from 'mongoose';
 
 const generateAccessAndRefreshToken = async(userId) => {
     try {
@@ -319,6 +321,92 @@ const updateUserCoverImage = asyncHandler(async(req ,res) => {
     )
 })
 
+const addProjectIDs = asyncHandler (async (req, res) => {
+
+    const { projectId } = req.body;
+
+    const userId = req.user?._id;
+
+    const existingProject = req.user?.projectId ? req.user.projectId : [];
+
+    if(!userId) {
+        throw new ApiError(401, "Unauthorized Request")
+    }
+
+    if(! projectId) {
+        throw new ApiError(400, "Project ID is Required")
+    }
+
+    const projectIDs = [...new Set(Array.isArray(projectId) ? projectId : [projectId])];
+    const projectObjectIdArray = projectIDs.map(id => new mongoose.Types.ObjectId(id.trim()));
+    const validProjects = await Project.find({ _id: { $in: projectObjectIdArray } });
+
+    const invalidProjectData = projectObjectIdArray.filter(testId =>
+        !validProjects.some(item => item._id.equals(testId))
+    );
+
+    if (invalidProjectData.length > 0) {
+        throw new ApiError(400, `Invalid Project IDs: ${invalidProjectData.join(', ')}`);
+    }
+
+    const combinedProjectIDs = [
+        ...existingProject?.map(id => id.toString()), // Convert to string
+        ...validProjects.map(vid => vid._id.toString()) // Ensure they are strings too
+    ];
+    const finalProjectIds = [...new Set(combinedProjectIDs)];
+
+    const updatedProject = await User.findByIdAndUpdate(userId, {
+        projectId: finalProjectIds.map(id => new mongoose.Types.ObjectId(id)), // Convert back to ObjectId if necessary
+    }, { new: true }).select('-password -refreshToken');
+
+    req.user = updatedProject;
+
+    return  res.status(200).json(
+        new ApiResponse(200 , updatedProject , "Project Added successfully")
+    );
+
+})
+
+const removeProjectIDs = asyncHandler(async (req, res) => {
+    const { projectId } = req.body;
+
+    const userId = req.user?._id;
+
+    const existingProject = req.user?.projectId ? req.user.projectId : [];
+
+    if(!userId) {
+        throw new ApiError(401, "Unauthorized Request")
+    }
+
+    if(! projectId) {
+        throw new ApiError(400, "Project ID is Required")
+    }
+
+    const projectIDs = [...new Set(Array.isArray(projectId) ? projectId : [projectId])];
+    const projectObjectIdArray = projectIDs.map(id => new mongoose.Types.ObjectId(id.trim()));
+
+    const notInProjectIds = projectObjectIdArray.filter(projectId =>
+        !existingProject.some(existingId => existingId.equals(projectId))
+    );
+
+    if(notInProjectIds.length > 0) {
+        throw new ApiError(400, `User does not contain the following Project IDs: ${notInProjectIds.join(', ')}`);
+    }
+
+    const finalIds = existingProject.filter(existingId =>
+        !projectObjectIdArray.some(reqId => reqId.equals(existingId))
+    );
+
+    const UpdateUser = await User.findByIdAndUpdate(userId , {
+        projectId: finalIds.map(id => new mongoose.Types.ObjectId(id)),
+    },
+    { new: true }  
+    ).select('-password -refreshToken');
+
+    return res.status(200).json(
+        new ApiResponse(200 , UpdateUser, "Project Updated successfully")
+    );
+});
 
 
 
@@ -333,4 +421,6 @@ export {
     updateAccountDetails,
     updateUserAvatar,
     updateUserCoverImage,
+    addProjectIDs,
+    removeProjectIDs
 }
