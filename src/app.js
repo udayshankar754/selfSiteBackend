@@ -7,10 +7,7 @@ import { ApiError } from './utils/ApiError.js';
 
 const app = expres();
 
-app.use(cors({
-    origin: process.env.CORS_0RIGIN,
-    credentials: true,
-}))
+app.use(cors('*'));
 
 app.use(expres.json({limit : '50kb'}))
 app.use(expres.urlencoded({extended : true , limit : '50kb'}))

@@ -3,6 +3,7 @@ import {
     addProjectIDs,
     changeCurrentPassword, 
     getCurrentUser, 
+    getUser, 
     loginUser, 
     logoutUser,
     refreshAccessToken, 
@@ -36,5 +37,6 @@ router.route("/avatar").patch(verifyJWT , upload.single("avatar"), updateUserAva
 router.route("/cover-image").patch(verifyJWT , upload.single("coverImage"), updateUserCoverImage)
 router.route("/add-projects").patch(verifyJWT ,addProjectIDs)
 router.route("/remove-projects").patch(verifyJWT ,removeProjectIDs);
+router.route("/get-user/:id").get(getUser)
 
 export default router

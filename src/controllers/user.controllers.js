@@ -6,7 +6,9 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 import { options } from "../utils/common.js";
 import { Project } from "../models/project.models.js";
-import mongoose from 'mongoose';
+import mongoose, { isValidObjectId } from 'mongoose';
+import { ProjectImage } from "../models/projectImage.models.js";
+import { ProjectVideo } from "../models/projectVideo.models.js";
 
 const generateAccessAndRefreshToken = async(userId) => {
     try {
@@ -410,7 +412,29 @@ const removeProjectIDs = asyncHandler(async (req, res) => {
     );
 });
 
+const getUser = asyncHandler ( async (req , res) => { 
+    const userId = req.params.id;
 
+    if(!userId) {
+        throw new ApiError(400, "User ID is Required")
+    }
+
+    const isValidUserId = isValidObjectId(userId);
+
+    if(!isValidUserId) {
+        throw new ApiError(400, "User Id Must be a valid Object ID ")
+    }
+
+    const isValidUser = await User.findById(userId).select('-password -refreshToken');
+
+    if(!isValidUser) {
+        throw new ApiError(404, "User Not Found")
+    }  
+
+    return res.status(200).json(
+        new ApiResponse(200 , isValidUser , "User Fetched Successfully")
+    )
+})
 
 
 export { 
@@ -424,5 +448,6 @@ export {
     updateUserAvatar,
     updateUserCoverImage,
     addProjectIDs,
-    removeProjectIDs
+    removeProjectIDs,
+    getUser,
 }
